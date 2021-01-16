@@ -1,5 +1,5 @@
-const readJson = require("../utils/readJsonFromFile");
 const path = require('path');
+const readJson = require('../utils/readJsonFromFile');
 
 const getCards = (req, res) => {
   const cardsData = path.join(__dirname, '..', 'data', 'cards.json');
@@ -7,9 +7,9 @@ const getCards = (req, res) => {
     .then((cards) => {
       res.send(cards);
     })
-    .catch(err => {
-      res.status(500).send(err);
-    })
-}
+    .catch(() => {
+      res.status(500).send({ message: 'Ошибка на сервере' });
+    });
+};
 
 module.exports = getCards;
