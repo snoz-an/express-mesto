@@ -25,12 +25,18 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.id)
+    .orFail(new Error('NotValidId'))
     .then((card) => {
       res.send({ data: card });
     })
-    .catch(() => {
-      res.status(404).send({ message: 'карточка не найдена' });
-      res.status(500).send({ message: 'Произошла ошибка на сервере' });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'переданы некорректные данные' });
+      } else if (err.message === 'NotValidId') {
+        res.status(404).send({ message: 'карточка не найдена' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка на сервере' });
+      }
     });
 };
 
@@ -40,10 +46,16 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } }, // добавить _id в массив, если его там нет
     { new: true },
   )
+    .orFail(new Error('NotValidId'))
     .then((like) => res.send({ data: like }))
-    .catch(() => {
-      res.status(404).send({ message: 'карточка не найдена' });
-      res.status(500).send({ message: 'Произошла ошибка на сервере' });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'переданы некорректные данные' });
+      } else if (err.message === 'NotValidId') {
+        res.status(404).send({ message: 'карточка не найдена' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка на сервере' });
+      }
     });
 };
 
@@ -53,10 +65,16 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } }, // убрать _id из массива
     { new: true },
   )
+    .orFail(new Error('NotValidId'))
     .then((like) => res.send({ data: like }))
-    .catch(() => {
-      res.status(404).send({ message: 'карточка не найдена' });
-      res.status(500).send({ message: 'Произошла ошибка на сервере' });
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(400).send({ message: 'переданы некорректные данные' });
+      } else if (err.message === 'NotValidId') {
+        res.status(404).send({ message: 'карточка не найдена' });
+      } else {
+        res.status(500).send({ message: 'Произошла ошибка на сервере' });
+      }
     });
 };
 
